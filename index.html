@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Barber shop | Запись</title>
+    <style>
+        /* CSS: Светлый минимализм */
+        body {
+            background-color: #fdfaf6;
+            color: #333;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        header { text-align: center; margin-bottom: 30px; }
+        .slogan { font-style: italic; color: #666; font-size: 1.2em; }
+
+        .price-list, .schedule {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 20px;
+        }
+
+        ul { list-style: none; padding: 0; }
+        li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .time-slot {
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .time-slot:hover { border-color: #333; }
+        
+        /* Цвета для статусов */
+        .available { border-left: 5px solid #a8e6cf; }
+        .busy { 
+            background: #f0f0f0; 
+            color: #999; 
+            text-decoration: line-through; 
+            border-left: 5px solid #ff8b94;
+            cursor: not-allowed;
+        }
+
+        video { width: 100%; max-width: 500px; border-radius: 15px; margin: 20px 0; }
+        
+        footer { margin-top: 30px; text-align: center; }
+        .tg-link { color: #0088cc; text-decoration: none; font-weight: bold; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Barber Studio</h1>
+        <p class="slogan">Твоя лучшая стрижка начинается здесь — в атмосфере уюта и профессионализма.</p>
+        <p>📍 ул. Пушкина, д. Колотушкина</p>
+    </header>
+
+    <section class="price-list">
+        <h3>Услуги и цены</h3>
+        <ul>
+            <li><span>Мужская стрижка</span> <span>25BYN </span></li>
+            <li><span>Стрижка бороды</span> <span>15BYN </span></li>
+            <li><span>Комплекс</span> <span>35BYN </span></li>
+        </ul>
+    </section>
+
+    <video controls autoplay muted loop>
+        <source src="your-video.mp4" type="video/mp4">
+    </video>
+
+    <section class="schedule">
+        <h3>Запись на сегодня</h3>
+        <div class="grid" id="schedule-grid">
+            </div>
+        <button onclick="clearSchedule()" style="margin-top: 20px; border: none; background: none; color: #999; cursor: pointer; font-size: 0.8em;">
+            Очистить все записи (для мастера)
+        </button>
+    </section>
+
+    <footer>
+        <p>Наш Telegram: <a href="https://t.me/maxmaxizzz" class="tg-link">@maxmaxizzz</a></p>
+    </footer>
+
+    <script>
+        const times = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
+        const grid = document.getElementById('schedule-grid');
+
+        function init() {
+            grid.innerHTML = '';
+            times.forEach(time => {
+                const slot = document.createElement('div');
+                slot.classList.add('time-slot');
+                
+                const savedName = localStorage.getItem(time);
+                
+                if (savedName) {
+                    slot.classList.add('busy');
+                    slot.innerText = `${time}\n(${savedName})`;
+                } else {
+                    slot.classList.add('available');
+                    slot.innerText = time;
+                    slot.onclick = () => makeBooking(time);
+                }
+                grid.appendChild(slot);
+            });
+        }
+
+        function makeBooking(time) {
+            const name = prompt(`Записать вас на ${time}? Введите имя:`);
+            if (name) {
+                localStorage.setItem(time, name);
+                init(); // Перерисовываем экран
+            }
+        }
+
+        function clearSchedule() {
+            if (confirm("Удалить все записи на сегодня?")) {
+                localStorage.clear();
+                init();
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
